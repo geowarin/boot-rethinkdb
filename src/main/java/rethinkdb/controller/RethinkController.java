@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import rethinkdb.model.ChatMessage;
 
 import javax.annotation.PostConstruct;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
@@ -36,14 +37,15 @@ public class RethinkController {
 //        r.db("chat").tableCreate("messages").run(connection);
 //        r.db("chat").table("messages").indexCreate("time").run(connection);
 
-        Cursor<ChatMessage> cur = r.db("chat").table("messages").changes()
+        Cursor<HashMap> cur = r.db("chat").table("messages").changes()
                 .getField("new_val")
-                .without("time")
-                .run(createRethinkConnection(), ChatMessage.class);
+//                .without("time")
+                .run(createRethinkConnection());
 
         new Thread(() -> {
             while (cur.hasNext()) {
-                ChatMessage chatMessage = cur.next();
+                HashMap data = cur.next();
+                ChatMessage chatMessage = new ChatMessage((String) data.get("message"), (String) data.get("from"));
                 log.info("New message: " + chatMessage.message);
                 webSocket.convertAndSend("/topic/messages", chatMessage);
             }

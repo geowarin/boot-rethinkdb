@@ -16,11 +16,13 @@
     <div id="messages">
 
     </div>
-    <label>
-        Message:
-        <input type="text" id="messageInput" />
-    </label>
-    <button onclick="sendMessage()" >Send</button>
+    <form onsubmit="sendMessage(); return false;">
+        <label>
+            Message:
+            <input type="text" id="messageInput" />
+        </label>
+        <button type="submit">Send</button>
+    </form>
 </div>
 
 </body>

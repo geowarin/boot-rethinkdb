@@ -20,19 +20,20 @@ function getMessages() {
 }
 
 function sendMessage() {
-    var message = {message: $('#messageInput').val(), from: 'aUser'};
+    var $messageInput = $('#messageInput');
+    var message = {message: $messageInput.val(), from: 'aUser'};
+    $messageInput.val('');
     post('/chat', message);
 }
 
 function connectWebSocket() {
     var socket = new SockJS('/chatWS');
     stompClient = Stomp.over(socket);
-    stompClient.debug = null;
+    //stompClient.debug = null;
     stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
         stompClient.subscribe('/topic/messages', function (result) {
             var message = JSON.parse(result.body);
-            console.log(result.body);
             $('#messages').append($('<div />').text(message.from + ": " + message.message))
         });
     });
