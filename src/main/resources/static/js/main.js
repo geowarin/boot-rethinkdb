@@ -1,4 +1,5 @@
 var userName = window.prompt("Enter your name", "some user");
+//var userName = "lol";
 
 function post(url, data) {
     return $.ajax({
@@ -12,12 +13,23 @@ function post(url, data) {
     })
 }
 
-function getMessages() {
-    return $.get('/chat').done(function (messages) {
-        messages.forEach(function (message) {
-            $('#messages').append($('<div />').text(message.from + ": " + message.message))
-        })
-    });
+function appendMessage(message) {
+    var $message = $(`<li class="clearfix">
+        <div class="message-data ${message.from == userName ? 'align-left': 'align-right'}">
+        <span class="message-data-name">${message.from}</span>
+        <span class="message-data-time">${message.time.hour}:${message.time.minute}</span>
+    </div>
+    <div class="message ${message.from == userName ? 'my-message': 'other-message float-right'}">
+        ${message.message}
+    </div>
+    </li>`);
+    var $messages = $('#messages');
+    $messages.append($message);
+    $messages.scrollTop($messages.prop("scrollHeight"));
+}
+
+function getPreviousMessages() {
+    $.get('/chat').done(messages => messages.forEach(appendMessage));
 }
 
 function sendMessage() {
@@ -27,18 +39,20 @@ function sendMessage() {
     post('/chat', message);
 }
 
+function onNewMessage(result) {
+    var message = JSON.parse(result.body);
+    appendMessage(message);
+}
+
 function connectWebSocket() {
     var socket = new SockJS('/chatWS');
     stompClient = Stomp.over(socket);
     //stompClient.debug = null;
-    stompClient.connect({}, function (frame) {
+    stompClient.connect({}, (frame) => {
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/messages', function (result) {
-            var message = JSON.parse(result.body);
-            $('#messages').append($('<div />').text(message.from + ": " + message.message))
-        });
+        stompClient.subscribe('/topic/messages', onNewMessage);
     });
 }
 
-getMessages();
+getPreviousMessages();
 connectWebSocket();

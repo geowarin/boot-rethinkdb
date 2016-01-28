@@ -2,28 +2,30 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-
-    <script src="webjars/jquery/3.0.0-alpha1/jquery.js"></script>
-    <script src="webjars/sockjs-client/1.0.0/sockjs.js"></script>
-    <script src="webjars/stomp-websocket/2.3.3/stomp.js"></script>
-    <script src="js/main.js"></script>
+    <title>Spring boot and Rethinkdb Chat</title>
+    <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
 
-<div id="chat">
+<div id="container">
+    <div id="chat">
+        <ul id="messages">
 
-    <div id="messages">
+        </ul>
+        <form onsubmit="sendMessage(); return false;">
 
+            <div class="chat-message clearfix">
+                <input name="message-to-send" autocomplete="off" id="messageInput" placeholder="Type your message" />
+
+                <button type="submit">Send</button>
+            </div>
+        </form>
     </div>
-    <form onsubmit="sendMessage(); return false;">
-        <label>
-            Message:
-            <input type="text" id="messageInput" />
-        </label>
-        <button type="submit">Send</button>
-    </form>
 </div>
 
+<script src="webjars/jquery/3.0.0-alpha1/jquery.js"></script>
+<script src="webjars/sockjs-client/1.0.0/sockjs.js"></script>
+<script src="webjars/stomp-websocket/2.3.3/stomp.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>
