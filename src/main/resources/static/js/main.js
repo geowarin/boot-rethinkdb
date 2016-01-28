@@ -1,7 +1,6 @@
 var userName = window.prompt("Enter your name", "some user");
 
 function post(url, data) {
-    var stringified = data ? JSON.stringify(data) : null
     return $.ajax({
         type: 'POST',
         url: url,
@@ -9,7 +8,7 @@ function post(url, data) {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        data: stringified
+        data: JSON.stringify(data)
     })
 }
 
