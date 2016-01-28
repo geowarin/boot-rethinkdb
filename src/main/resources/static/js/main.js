@@ -1,3 +1,5 @@
+var userName = window.prompt("Enter your name", "some user");
+
 function post(url, data) {
     var stringified = data ? JSON.stringify(data) : null
     return $.ajax({
@@ -21,7 +23,7 @@ function getMessages() {
 
 function sendMessage() {
     var $messageInput = $('#messageInput');
-    var message = {message: $messageInput.val(), from: 'aUser'};
+    var message = {message: $messageInput.val(), from: userName};
     $messageInput.val('');
     post('/chat', message);
 }
