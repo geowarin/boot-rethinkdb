@@ -1,17 +1,18 @@
 package rethinkdb.chat;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 public class ChatMessage {
     public String message;
     public String from;
-    public Date time;
+    public OffsetDateTime time;
 
     public ChatMessage() {
     }
 
-    public ChatMessage(String message, String from) {
+    public ChatMessage(String message, String from, OffsetDateTime time) {
         this.message = message;
         this.from = from;
+        this.time = time;
     }
 }
