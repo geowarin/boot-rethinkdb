@@ -4,6 +4,10 @@ import com.rethinkdb.RethinkDB;
 import com.rethinkdb.net.Connection;
 import com.rethinkdb.net.ConnectionInstance;
 import com.rethinkdb.net.Cursor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,15 +24,30 @@ public class RethinkController {
 
     public static final RethinkDB r = RethinkDB.r;
     public static final String DBHOST = "192.168.99.100";
+    protected final Log log = LogFactory.getLog(getClass());
+
+    @Autowired
+    private SimpMessagingTemplate webSocket;
 
     @PostConstruct
     public void init() {
-        Connection<ConnectionInstance> connection = createRethinkConnection();
+//        Connection<ConnectionInstance> connection = createRethinkConnection();
 //        r.dbCreate("chat").run(connection);
 //        r.db("chat").tableCreate("messages").run(connection);
 //        r.db("chat").table("messages").indexCreate("time").run(connection);
-//            Cursor<HashMap> cur = r.db("chat").table("messages").changes()
-//                    .getField("new_val").without("time").run(conn);
+
+        Cursor<ChatMessage> cur = r.db("chat").table("messages").changes()
+                .getField("new_val")
+                .without("time")
+                .run(createRethinkConnection(), ChatMessage.class);
+
+        new Thread(() -> {
+            while (cur.hasNext()) {
+                ChatMessage chatMessage = cur.next();
+                log.info("New message: " + chatMessage.message);
+                webSocket.convertAndSend("/topic/messages", chatMessage);
+            }
+        }).start();
     }
 
     private Connection<ConnectionInstance> createRethinkConnection() {
@@ -38,7 +57,6 @@ public class RethinkController {
             throw new RuntimeException(e);
         }
     }
-
 
     @RequestMapping(method = RequestMethod.POST)
     public ChatMessage postMessage(@RequestBody ChatMessage chatMessage) {

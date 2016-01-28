@@ -1,5 +1,5 @@
-
 function post(url, data) {
+    var stringified = data ? JSON.stringify(data) : null
     return $.ajax({
         type: 'POST',
         url: url,
@@ -7,23 +7,36 @@ function post(url, data) {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        data: JSON.stringify(data)
+        data: stringified
     })
 }
 
 function getMessages() {
-    return $.get('/chat').done(function(messages) {
-        messages.forEach(function(message) {
-            $('#messages').append($('<div />').text(message.message))
+    return $.get('/chat').done(function (messages) {
+        messages.forEach(function (message) {
+            $('#messages').append($('<div />').text(message.from + ": " + message.message))
         })
     });
 }
 
 function sendMessage() {
     var message = {message: $('#messageInput').val(), from: 'aUser'};
-    post('/chat', message).done(function(data) {
-        console.log(data)
+    post('/chat', message);
+}
+
+function connectWebSocket() {
+    var socket = new SockJS('/chatWS');
+    stompClient = Stomp.over(socket);
+    stompClient.debug = null;
+    stompClient.connect({}, function (frame) {
+        console.log('Connected: ' + frame);
+        stompClient.subscribe('/topic/messages', function (result) {
+            var message = JSON.parse(result.body);
+            console.log(result.body);
+            $('#messages').append($('<div />').text(message.from + ": " + message.message))
+        });
     });
 }
 
 getMessages();
+connectWebSocket();
