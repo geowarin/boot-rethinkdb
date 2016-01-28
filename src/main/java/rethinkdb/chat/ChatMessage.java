@@ -1,4 +1,4 @@
-package rethinkdb.model;
+package rethinkdb.chat;
 
 import java.util.Date;
 
