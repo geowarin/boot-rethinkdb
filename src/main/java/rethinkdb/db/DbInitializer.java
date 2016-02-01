@@ -16,7 +16,7 @@ public class DbInitializer implements InitializingBean {
     @Autowired
     private ChatChangesListener chatChangesListener;
 
-    public static final RethinkDB r = RethinkDB.r;
+    private static final RethinkDB r = RethinkDB.r;
 
     @Override
     public void afterPropertiesSet() throws Exception {

@@ -3,7 +3,6 @@ package rethinkdb.chat;
 import java.time.OffsetDateTime;
 
 public class ChatMessage {
-    public String id;
     public String message;
     public String from;
     public OffsetDateTime time;
@@ -15,14 +14,6 @@ public class ChatMessage {
         this.message = message;
         this.from = from;
         this.time = time;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getMessage() {
