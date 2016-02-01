@@ -10,9 +10,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import rethinkdb.db.RethinkDBConnectionFactory;
 
-import java.time.OffsetDateTime;
-import java.util.HashMap;
-
 @Service
 public class ChatChangesListener {
     protected final Log log = LogFactory.getLog(getClass());
@@ -27,19 +24,15 @@ public class ChatChangesListener {
 
     @Async
     public void pushChangesToWebSocket() {
-        Cursor<HashMap> cursor = r.db("chat").table("messages").changes()
+        Cursor<ChatMessage> cursor = r.db("chat").table("messages").changes()
                 .getField("new_val")
-                .run(connectionFactory.createConnection());
+                .run(connectionFactory.createConnection(), ChatMessage.class);
 
         while (cursor.hasNext()) {
-            HashMap data = cursor.next();
-            ChatMessage chatMessage = new ChatMessage(
-                    (String) data.get("message"),
-                    (String) data.get("from"),
-                    (OffsetDateTime) data.get("time")
-            );
+            ChatMessage chatMessage = cursor.next();
             log.info("New message: " + chatMessage.message);
             webSocket.convertAndSend("/topic/messages", chatMessage);
         }
     }
+
 }
