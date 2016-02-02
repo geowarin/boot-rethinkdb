@@ -14,10 +14,11 @@ function post(url, data) {
 }
 
 function appendMessage(message) {
+    var fromNow = moment(message.time).format('HH:mm:ss');
     var $message = $(`<li class="clearfix">
         <div class="message-data ${message.from == userName ? 'align-left': 'align-right'}">
         <span class="message-data-name">${message.from}</span>
-        <span class="message-data-time">${message.time.hour}:${message.time.minute}</span>
+        <span class="message-data-time">${fromNow}</span>
     </div>
     <div class="message ${message.from == userName ? 'my-message': 'other-message float-right'}">
         ${message.message}

@@ -37,6 +37,9 @@ dependencies {
     compile 'org.webjars:jquery:3.0.0-alpha1'
     compile 'org.webjars:sockjs-client:1.0.0'
     compile 'org.webjars:stomp-websocket:2.3.3'
+    compile 'org.webjars:momentjs:2.11.1'
+
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
     compile 'com.rethinkdb:rethinkdb-driver:2.2-b1-SNAPSHOT'
     testCompile('org.springframework.boot:spring-boot-starter-test')
