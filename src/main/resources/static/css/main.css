@@ -40,6 +40,10 @@ body {
     margin-bottom: 15px;
 }
 
+.message-data-name{
+	font-weight: bold;
+}
+
 .message-data-time {
     color: #92959E;
     padding-left: 6px;
